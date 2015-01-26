@@ -33,7 +33,7 @@ void line(TGAImage &image, int **zbuffer,
         y = (1.-t)*y1 + t*y2 ;
         z = (1.-t)*z1 + t*z2;
 
-        if (zbuffer[x][y] < z)
+        if (x > 0 && y > 0 && x < image.get_width() && y < image.get_height() && zbuffer[x][y] < z)
         {
             if(steep)
                 image.set(y,x,color1) ;
