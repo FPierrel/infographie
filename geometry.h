@@ -19,4 +19,8 @@ struct Pos{
     float x,y,z;
 };
 
+struct Pos_i{
+    int x,y,z;
+};
+
 #endif
