@@ -117,7 +117,7 @@ void triangle(TGAImage &image, int x1, int y1, int x2, int y2, int x3, int y3)
 void rendu(TGAImage &image, Model model)
 {
     vector<vector<int> > face;
-    Vec3f lumiere(0,0, 1.);
+    Vec3f lumiere(0,0, -1.);
     Vec3f vn1, vn2, vn3;
 
     int x1, x2, x3;
@@ -158,7 +158,7 @@ void rendu(TGAImage &image, Model model)
         vn3.normalize();
 
 
-        moyenne = (vn1.scalaire(lumiere)+vn2.scalaire(lumiere)+vn3.scalaire(lumiere))/-3;
+        moyenne = (vn1.scalaire(lumiere)+vn2.scalaire(lumiere)+vn3.scalaire(lumiere))/3;
 
         triangle_plein(image, zbuffer, x1, y1, z1, x2, y2, z2, x3, y3, z3, TGAColor(moyenne*-255,1));
     }
