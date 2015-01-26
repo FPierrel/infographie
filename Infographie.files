@@ -1,0 +1,7 @@
+geometry.h
+main.cpp
+model.cpp
+model.h
+tgaimage.cpp
+tgaimage.h
+geometry.cpp
