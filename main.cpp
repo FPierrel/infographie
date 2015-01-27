@@ -12,8 +12,8 @@ void line(TGAImage &image, int **zbuffer,
           int x2, int y2, int z2,
           TGAColor color1 = TGAColor(255, 1))
 {
-    float t;
-    int  y, z;
+    float t, y;
+    int  z;
 
     bool steep = false ;
     if((steep = abs(y2-y1)>abs(x2-x1))){
@@ -33,14 +33,14 @@ void line(TGAImage &image, int **zbuffer,
         y = (1.-t)*y1 + t*y2 ;
         z = (1.-t)*z1 + t*z2;
 
-        if (x > 0 && y > 0 && x < image.get_width() && y < image.get_height() && zbuffer[x][y] < z)
+        if (x > 0 && y > 0 && x < image.get_width() && y < image.get_height() && zbuffer[x][(int)y] < z)
         {
             if(steep)
-                image.set(y,x,color1) ;
+                image.set((int)y,x,color1) ;
             else
-                image.set(x,y,color1) ;
+                image.set(x,(int)y,color1) ;
 
-            zbuffer[x][y] = z;
+            zbuffer[x][(int)y] = z;
         }
     }
 }
