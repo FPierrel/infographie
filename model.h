@@ -2,7 +2,7 @@
 #define _MODEL_H
 
 #include <vector>
-#include "geometry.h"
+#include "geometry2.h"
 
 using namespace std;
 

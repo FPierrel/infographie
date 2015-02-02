@@ -5,7 +5,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include "model.h"
-#include "geometry.h"
+#include "geometry2.h"
 #include <stdio.h>
 
 using namespace std;
