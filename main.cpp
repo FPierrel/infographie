@@ -4,18 +4,45 @@
 
 #include "tgaimage.h"
 #include "model.h"
+#include "geometry.h"
+#include "geometry2.h"
 
 using namespace std;
 
-void line(TGAImage &image, int **zbuffer,
-          float x1, float y1, float z1,
-          float x2, float y2, float z2,
-          TGAColor color1 = TGAColor(255, 1))
-{
+Matrix ModelView;
+Matrix Viewport;
+Matrix Projection;
 
+void viewport(int x, int y, int w, int h)
+{
+    Viewport = Matrix::identity();
+    Viewport[0][3] = x+w/2.f;
+    Viewport[1][3] = y+h/2.f;
+    Viewport[2][3] = 1.f;
+    Viewport[0][0] = w/2.f;
+    Viewport[1][1] = h/2.f;
+    Viewport[2][2] = 0;
 }
 
-void triangle_plein(TGAImage &image, int **zbuffer,Pos pos_1, Pos pos_2, Pos pos_3,
+void projection(float coeff){
+    Projection = Matrix::identity();
+    Projection[3][2] = coeff;
+}
+
+void lookat(Vec3f eye, Vec3f center, Vec3f up){
+    Vec3f z = (eye-center).normalize();
+    Vec3f x = cross(up,z).normalize();
+    Vec3f y = cross(z,x).normalize();
+    ModelView = Matrix::identity();
+    for (int i = 0 ; i < 3 ; i++){
+        ModelView[0][i] = x[i];
+        ModelView[1][i] = y[i];
+        ModelView[2][i] = z[i];
+        ModelView[i][3] = -center[i];
+    }
+}
+
+void triangle_plein(TGAImage &image, int **zbuffer,Pos_b pos_1, Pos_b pos_2, Pos_b pos_3,
                                     TGAColor color1 = TGAColor(255, 1),
                                     TGAColor color2 = TGAColor(255, 1 ),
                                     TGAColor color3 = TGAColor(255, 1))
@@ -77,12 +104,13 @@ void triangle(TGAImage &image, int x1, int y1, int x2, int y2, int x3, int y3)
 void rendu(TGAImage &image, Model model)
 {
     vector<vector<int> > face;
-    Vec3f lumiere(-1.,-1.,-1.);
-    Pos eye(1.f,1.f,3.f);
-    Pos center(0.f, 0.f, 0.f);
+    Vec3f_b lumiere(0.f,0.f,-1.f);
+    Vec3f_b vn1, vn2, vn3;
+    Pos_b pos_1, pos_2, pos_3;
 
-    Vec3f vn1, vn2, vn3;
-    Pos pos_1, pos_2, pos_3;
+    Vec3f eye(1,1,3);
+    Vec3f center(0,0,0);
+    Vec3f up(0,1,0);
 
     int w = image.get_width();
     int h = image.get_height();
@@ -140,30 +168,6 @@ void rendu(TGAImage &image, Model model)
         delete[] zbuffer[i];
     delete[] zbuffer;
 }
-
-void wireframe(TGAImage &image, Model model)
-{
-    vector<vector<int> > face;
-
-    int x1, x2, x3;
-    int y1, y2, y3;
-    int w = image.get_width();
-    int h = image.get_height();
-    int zw = (int)(0.4 * w);
-    int zh = (int)(0.4 * h);
-    for(unsigned int i = 0 ; i < model.faces.size() ; i++)
-    {
-        face = model.faces[i];
-        x1 = (int)(model.sommets[face[0][0]-1].x*zw) + w/2;
-        x2 = (int)(model.sommets[face[1][0]-1].x*zw) + w/2;
-        x3 = (int)(model.sommets[face[2][0]-1].x*zw) + w/2;
-        y1 = (int)(model.sommets[face[0][0]-1].y*zh) + h/2;
-        y2 = (int)(model.sommets[face[1][0]-1].y*zh) + h/2;
-        y3 = (int)(model.sommets[face[2][0]-1].y*zh) + h/2;
-        triangle(image, x1, y1, x2, y2, x3, y3);
-    }
-}
-
 
 int main()
 {

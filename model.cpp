@@ -32,7 +32,7 @@ Model::Model(const char *filename)
 
                     if (strcmp(token[0],"vn") == 0)
                     {
-                        Vec3f v;
+                        Vec3f_b v;
                         v.x = strtof(strtok(0, " "), NULL);
                         v.y = strtof(strtok(0, " "), NULL);
                         v.z = strtof(strtok(0, " "), NULL);
@@ -40,7 +40,7 @@ Model::Model(const char *filename)
                     }
                     else if (strcmp(token[0],"v") == 0)
                     {
-                        Pos position;
+                        Pos_b position;
                         position.x = strtof(strtok(0, " "), NULL);
                         position.y = strtof(strtok(0, " "), NULL);
                         position.z = strtof(strtok(0, " "), NULL);

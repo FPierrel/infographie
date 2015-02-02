@@ -10,8 +10,8 @@ class Model{
 public:
 	Model(const char *file);
 
-    vector<Pos> sommets;
-    vector<Vec3f> norms;
+    vector<Pos_b> sommets;
+    vector<Vec3f_b> norms;
     vector<vector<vector<int> > > faces;
 };
 
