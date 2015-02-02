@@ -54,6 +54,8 @@ void triangle_plein(TGAImage &image, int **zbuffer,Pos pos_1, Pos pos_2, Pos pos
     float max_x = max(pos_1.x, max(pos_2.x, pos_3.x));
     float min_y = min(pos_1.y, min(pos_2.y, pos_3.y));
     float max_y = max(pos_1.y, max(pos_2.y, pos_3.y));
+    char c;
+    float u,v,w;
 
     int xn, yn, zn;
     float p1, p2, p3;
@@ -73,11 +75,20 @@ void triangle_plein(TGAImage &image, int **zbuffer,Pos pos_1, Pos pos_2, Pos pos
                 zn=(pos_2.x-pos_1.x)*(pos_3.y-pos_1.y) - (pos_3.x-pos_1.x)*(pos_2.y-pos_1.y);
 
                 z = (pos_1.x*xn + pos_1.y*yn + pos_1.z*zn - x*xn - y*yn) / zn;
-               // cout << z << endl;
 
                 if ( z > zbuffer[x][y])
                 {
-                    image.set(x,y,color1);
+                    u = ((x-pos_3.x)*(pos_2.y-pos_3.y)-(pos_2.x-pos_3.x)*(y-pos_3.y))/
+                        ((pos_1.x-pos_3.x)*(pos_2.y-pos_3.y)-(pos_2.x-pos_3.x)*(pos_1.y-pos_3.y));
+
+                    v = ((x-pos_3.x)*(pos_3.y-pos_1.y)-(pos_3.x-pos_1.x)*(y-pos_3.y))/
+                        ((pos_1.x-pos_3.x)*(pos_2.y-pos_3.y)-(pos_2.x-pos_3.x)*(pos_1.y-pos_3.y));
+
+                    w = ((x-pos_2.x)*(pos_1.y-pos_2.y)-(pos_1.x-pos_2.x)*(y-pos_2.y))/
+                        ((pos_1.x-pos_3.x)*(pos_2.y-pos_3.y)-(pos_2.x-pos_3.x)*(pos_1.y-pos_3.y));
+
+                    c = u*color1.val + v*color2.val + w*color3.val;
+                    image.set(x,y,TGAColor(c,1));
                     zbuffer[x][y] = z;
                 }
             }
@@ -146,8 +157,8 @@ void rendu(TGAImage &image, Model model)
         else if (lum3 < 0.f) lum3 = 0.0f;
 
         triangle_plein(image, zbuffer, pos_1,pos_2,pos_3, TGAColor(lum1*255,1),
-                                                          TGAColor(lum2*255,2),
-                                                          TGAColor(lum3*255,3));
+                                                          TGAColor(lum2*255,1),
+                                                          TGAColor(lum3*255,1));
     }
 
     for (int i = 0 ; i < w ; i++)

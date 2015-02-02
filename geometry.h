@@ -21,6 +21,17 @@ struct Pos{
 
 struct Pos_i{
     int x,y,z;
+    Pos_i(int x, int y, int z)
+    {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+    }
+
+    Pos_i operator -(Pos_i p)
+    {
+        return Pos_i(x-p.x, y-p.y, z-p.z);
+    }
 };
 
 #endif
