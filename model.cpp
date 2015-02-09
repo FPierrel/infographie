@@ -38,6 +38,13 @@ Model::Model(const char *filename)
                         v.z = strtof(strtok(0, " "), NULL);
                         this->norms.push_back(v);
                     }
+                    else if (strcmp(token[0],"vt") == 0)
+                    {
+                        vector<float> _uv;
+                        _uv.push_back(strtof(strtok(0, " "), NULL));
+                        _uv.push_back(strtof(strtok(0, " "), NULL));
+                        uv.push_back(_uv);
+                    }
                     else if (strcmp(token[0],"v") == 0)
                     {
                         Pos_b position;

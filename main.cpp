@@ -6,40 +6,42 @@
 #include "model.h"
 #include "geometry.h"
 #include "geometry2.h"
+//http://habrahabr.ru/post/248723/
 
 using namespace std;
 
-Matrix ModelView;
-Matrix Viewport;
-Matrix Projection;
+int depth = 2048;
 
-void viewport(int x, int y, int w, int h)
+Matrix viewport(int x, int y, int w, int h)
 {
-    Viewport = Matrix::identity();
+    Matrix Viewport = Matrix::identity(4);
     Viewport[0][3] = x+w/2.f;
     Viewport[1][3] = y+h/2.f;
-    Viewport[2][3] = 1.f;
+    Viewport[2][3] = depth/2.f;
     Viewport[0][0] = w/2.f;
     Viewport[1][1] = h/2.f;
-    Viewport[2][2] = 0;
+    Viewport[2][2] = depth/2.f;
+
+    return Viewport;
 }
 
-void projection(float coeff){
-    Projection = Matrix::identity();
-    Projection[3][2] = coeff;
-}
+//void projection(float coeff){
+//    Projection = Matrix::identity();
+//    Projection[3][2] = coeff;
+//}
 
-void lookat(Vec3f eye, Vec3f center, Vec3f up){
+Matrix lookat(Vec3f eye, Vec3f center, Vec3f up){
     Vec3f z = (eye-center).normalize();
-    Vec3f x = cross(up,z).normalize();
-    Vec3f y = cross(z,x).normalize();
-    ModelView = Matrix::identity();
+    Vec3f x = (up^z).normalize();
+    Vec3f y = (z^x).normalize();
+    Matrix res = Matrix::identity(4);
     for (int i = 0 ; i < 3 ; i++){
-        ModelView[0][i] = x[i];
-        ModelView[1][i] = y[i];
-        ModelView[2][i] = z[i];
-        ModelView[i][3] = -center[i];
+        res[0][i] = x[i];
+        res[1][i] = y[i];
+        res[2][i] = z[i];
+        res[i][3] = -center[i];
     }
+    return res;
 }
 
 void triangle_plein(TGAImage &image, int **zbuffer,Pos_b pos_1, Pos_b pos_2, Pos_b pos_3,
@@ -60,6 +62,7 @@ void triangle_plein(TGAImage &image, int **zbuffer,Pos_b pos_1, Pos_b pos_2, Pos
 
     for (int x = min_x ; x <= max_x ; x++)
         for(int y = min_y ; y <= max_y ; y++)
+            if (x>0 && x < image.get_width() && y > 0 && y < image.get_height())
         {
             p1 = pos_1.x * (pos_2.y-y) + pos_2.x * (y - pos_1.y) + x * (pos_1.y - pos_2.y);
             p2 = pos_2.x * (pos_3.y-y) + pos_3.x * (y - pos_2.y) + x * (pos_2.y - pos_3.y);
@@ -94,28 +97,34 @@ void triangle_plein(TGAImage &image, int **zbuffer,Pos_b pos_1, Pos_b pos_2, Pos
         }
 }
 
-void triangle(TGAImage &image, int x1, int y1, int x2, int y2, int x3, int y3)
-{
-    //line(image,x1,y1,x2,y2);
-    //line(image,x2,y2,x3,y3);
-    //line(image,x3,y3,x1,y1);
-}
-
 void rendu(TGAImage &image, Model model)
 {
+
+    int w = image.get_width();
+    int h = image.get_height();
+    float lum1, lum2, lum3;
+
+
     vector<vector<int> > face;
     Vec3f_b lumiere(0.f,0.f,-1.f);
     Vec3f_b vn1, vn2, vn3;
     Pos_b pos_1, pos_2, pos_3;
 
-    Vec3f eye(1,1,3);
+    Vec3f eye(0,0,3);
     Vec3f center(0,0,0);
     Vec3f up(0,1,0);
 
-    int w = image.get_width();
-    int h = image.get_height();
-    float zw = (0.5 * w);
-    float zh = (0.5 * h);
+    Matrix ModelView(lookat(eye,center,Vec3f(0,1,0)));
+    Matrix Projection = Matrix::identity(4);
+    Matrix ViewPort   = viewport(w/8, h/8, w*3/4, h*3/4);
+    Projection[3][2] = -1.f/(eye-center).norm();
+    Matrix z = (ViewPort*Projection*ModelView);
+    /*lookat(eye,center,up);
+    viewport(w/8, h/8, w*3/4, h*3/4);
+    projection(-1.f/(eye-center).norm());*/
+
+    //float zw = (0.5 * w);
+    //float zh = (0.5 * h);
 
     int** zbuffer;
     zbuffer = new int*[w];
@@ -125,11 +134,11 @@ void rendu(TGAImage &image, Model model)
         for (int j = 0 ; j < h ; j++)
             zbuffer[i][j] = INT_MIN;
 
-    float lum1, lum2, lum3;
+
     for(unsigned int i = 0 ; i < model.faces.size() ; i++)
     {
         face = model.faces[i];
-        pos_1.x = (model.sommets[face[0][0]-1].x*zw) + w/2;
+        /*pos_1.x = (model.sommets[face[0][0]-1].x*zw) + w/2;
         pos_2.x = (model.sommets[face[1][0]-1].x*zw) + w/2;
         pos_3.x = (model.sommets[face[2][0]-1].x*zw) + w/2;
         pos_1.y = (model.sommets[face[0][0]-1].y*zh) + h/2;
@@ -137,7 +146,31 @@ void rendu(TGAImage &image, Model model)
         pos_3.y = (model.sommets[face[2][0]-1].y*zh) + h/2;
         pos_1.z = (model.sommets[face[0][0]-1].z*2048);
         pos_2.z = (model.sommets[face[1][0]-1].z*2048);
-        pos_3.z = (model.sommets[face[2][0]-1].z*2048);
+        pos_3.z = (model.sommets[face[2][0]-1].z*2048);*/
+
+        Matrix facette(4,4);
+        facette[0][0] = model.sommets[face[0][0]-1].x + 1;// + w/2;
+        facette[1][0] = model.sommets[face[0][0]-1].y + 1;// + h/2;
+        facette[2][0] = model.sommets[face[0][0]-1].z;// * 2048;
+        facette[0][1] = model.sommets[face[1][0]-1].x + 1;// + w/2;
+        facette[1][1] = model.sommets[face[1][0]-1].y + 1;// + h/2;
+        facette[2][1] = model.sommets[face[1][0]-1].z;// * 2048;
+        facette[0][2] = model.sommets[face[2][0]-1].x + 1;// + w/2;
+        facette[1][2] = model.sommets[face[2][0]-1].y + 1;// + h/2;
+        facette[2][2] = model.sommets[face[2][0]-1].z;// * 2048;
+
+        facette = ViewPort*Projection*ModelView*facette;
+        //facette = facette*z;
+
+        pos_1.x = facette[0][0];
+        pos_2.x = facette[0][1];
+        pos_3.x = facette[0][2];
+        pos_1.y = facette[1][0];
+        pos_2.y = facette[1][1];
+        pos_3.y = facette[1][2];
+        pos_1.z = facette[2][0];
+        pos_2.z = facette[2][1];
+        pos_3.z = facette[2][2];
 
         vn1 = model.norms[face[0][2]-1];
         vn2 = model.norms[face[1][2]-1];
@@ -174,7 +207,7 @@ int main()
     Model model("head.obj");
     TGAImage image(1000, 1000, 1);
 
-    wireframe(image, model);
+    //wireframe(image, model);
     rendu(image,model);
     image.flip_vertically();
     image.write_tga_file("dump.tga");
