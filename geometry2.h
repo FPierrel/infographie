@@ -15,6 +15,12 @@ public:
     Vec3f_b* normalize(float l = 1);
 };
 
+struct Vec2f_b{
+    float x;
+    float y;
+};
+
+
 struct Pos_b{
     Pos_b(){}
     Pos_b(float x, float y, float z)
