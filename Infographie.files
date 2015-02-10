@@ -1,9 +1,7 @@
-geometry2.h
 main.cpp
 model.cpp
 model.h
 tgaimage.cpp
 tgaimage.h
-geometry2.cpp
 geometry.cpp
 geometry.h

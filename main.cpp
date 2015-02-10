@@ -30,10 +30,10 @@ Matrix viewport(int x, int y, int w, int h)
 //    Projection[3][2] = coeff;
 //}
 
-Matrix lookat(Vec3f eye, Vec3f center, Vec3f up){
-    Vec3f z = (eye-center).normalize();
-    Vec3f x = (up^z).normalize();
-    Vec3f y = (z^x).normalize();
+Matrix lookat(Pos_f eye, Pos_f center, Pos_f up){
+    Pos_f z = (eye-center).normalize();
+    Pos_f x = (up^z).normalize();
+    Pos_f y = (z^x).normalize();
     Matrix res = Matrix::identity(4);
     for (int i = 0 ; i < 3 ; i++){
         res[0][i] = x[i];
@@ -96,8 +96,6 @@ void triangle_plein(TGAImage &image, Model *model,int **zbuffer,Pos_f pos_1, Pos
                     float xt = u*uv1[0] + v*uv2[0] + w*uv3[0];
                     float yt = u*uv1[1] + v*uv2[1] + w*uv3[1];
 
-                    //c = u*color1.val + v*color2.val + w*color3.val;
-
                     image.set(x,y,model->diffusemap_.get(xt*model->diffusemap_.get_width(),
                                                          yt*model->diffusemap_.get_height()));
                     zbuffer[x][y] = z;
@@ -113,14 +111,14 @@ void rendu(TGAImage &image, Model model)
     float lum1, lum2, lum3;
 
     vector<vector<int> > face;
-    Vec3f_b lumiere(0.f,0.f,-1.f);
-    Vec3f_b vn1, vn2, vn3;
+    Pos_f lumiere(0.f,0.f,-1.f);
+    Pos_f vn1, vn2, vn3;
     vector<float> uv1, uv2, uv3;
     Pos_f pos_1, pos_2, pos_3;
 
-    Vec3f eye(1,1,1);
-    Vec3f center(0,0,0);
-    Vec3f up(0,1,0);
+    Pos_f eye(1,1,1);
+    Pos_f center(0,0,0);
+    Pos_f up(0,1,0);
 
     Matrix ModelView(lookat(eye,center,Vec3f(0,1,0)));
     Matrix Projection = Matrix::identity(4);

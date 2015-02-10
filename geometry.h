@@ -6,6 +6,69 @@
 
 class Matrix;
 
+template<class t> struct Pos
+{
+    t x,y,z;
+
+    Pos(){}
+    Pos(t x, t y, t z){
+        this->x = x;
+        this->y = y;
+        this->z = z;
+    }
+
+    Pos* normalize(float l = 1){
+        float n = norm();
+
+        this->x = this->x*l/n;
+        this->y = this->y*l/n;
+        this->z = this->z*l/n;
+
+        return this;
+    }
+
+    float norm(){
+        return sqrt(x*x + y*y +z*z);
+    }
+
+    Pos operator -(Pos p){
+        return Pos<t>(this->x - p.x, this->y - p.y, this->z - p.z);
+    }
+
+    Pos operator +(Pos p){
+        return Pos<t>(this->x + p.x, this->y + p.y, this->z + p.z);
+    }
+
+    Pos operator ^(Pos<t> p){
+         return Pos<t>(y*p.z-z*p.y, z*p.x-x*p.z, x*p.y-y*p.x);
+    }
+
+    Pos operator *(float f){
+        return Pos(x*f, y*f, z*f);
+    }
+
+    Pos operator *(Pos<t> p ){
+        return x*p.x + y*p.y + z*p.z;
+    }
+
+    t& operator[] (int i){
+        switch (i){
+        case 0:
+            return x;
+        case 1:
+            return y;
+        case 2:
+            return z;
+        }
+    }
+};
+
+typedef Pos<int> Pos_i;
+typedef Pos<float> Pos_f;
+
+
+
+/*
 template <class t> struct Vec2 {
     t x, y;
     Vec2<t>() : x(t()), y(t()) {}
@@ -29,6 +92,7 @@ template <class t> struct Vec3 {
     Vec3<t> operator *(float f)          const { return Vec3<t>(x*f, y*f, z*f); }
     t       operator *(const Vec3<t> &v) const { return x*v.x + y*v.y + z*v.z; }
     float norm () const { return std::sqrt(x*x+y*y+z*z); }
+    float scalaire(Vec3 other) { return this->x*other.x + this->y * other.y + this->z * other.z; }
     Vec3<t> & normalize(t l=1) { *this = (*this)*(l/norm()); return *this; }
     t& operator[](const int i) { return i<=0 ? x : (1==i ? y : z); }
     template <class > friend std::ostream& operator<<(std::ostream& s, Vec3<t>& v);
@@ -51,7 +115,7 @@ template <class t> std::ostream& operator<<(std::ostream& s, Vec2<t>& v) {
 template <class t> std::ostream& operator<<(std::ostream& s, Vec3<t>& v) {
     s << "(" << v.x << ", " << v.y << ", " << v.z << ")\n";
     return s;
-}
+}*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -60,7 +124,7 @@ class Matrix {
     int rows, cols;
 public:
     Matrix(int r=4, int c=4);
-    Matrix(Vec3f v);
+    Matrix(Pos_f p);
     int nrows();
     int ncols();
     static Matrix identity(int dimensions);
@@ -70,6 +134,5 @@ public:
     Matrix inverse();
     friend std::ostream& operator<<(std::ostream& s, Matrix& m);
 };
-
 
 #endif //__GEOMETRY_H__
