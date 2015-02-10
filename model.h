@@ -12,7 +12,7 @@ public:
 	Model(const char *file);
     void load_texture(std::string filename, const char *suffix, TGAImage &img);
 
-    vector<Pos_b> sommets;
+    vector<Pos_f> sommets;
     vector<Vec3f_b> norms;
     vector<vector<float> > uv;
     vector<vector<vector<int> > > faces;

@@ -44,7 +44,7 @@ Matrix lookat(Vec3f eye, Vec3f center, Vec3f up){
     return res;
 }
 
-void triangle_plein(TGAImage &image, Model *model,int **zbuffer,Pos_b pos_1, Pos_b pos_2, Pos_b pos_3,
+void triangle_plein(TGAImage &image, Model *model,int **zbuffer,Pos_f pos_1, Pos_f pos_2, Pos_f pos_3,
                                     vector<float> uv1,
                                     vector<float> uv2,
                                     vector<float> uv3,
@@ -116,7 +116,7 @@ void rendu(TGAImage &image, Model model)
     Vec3f_b lumiere(0.f,0.f,-1.f);
     Vec3f_b vn1, vn2, vn3;
     vector<float> uv1, uv2, uv3;
-    Pos_b pos_1, pos_2, pos_3;
+    Pos_f pos_1, pos_2, pos_3;
 
     Vec3f eye(1,1,1);
     Vec3f center(0,0,0);
@@ -146,15 +146,6 @@ void rendu(TGAImage &image, Model model)
     for(unsigned int i = 0 ; i < model.faces.size() ; i++)
     {
         face = model.faces[i];
-//        pos_1.x = (model.sommets[face[0][0]-1].x*zw) + w/2;
-//        pos_2.x = (model.sommets[face[1][0]-1].x*zw) + w/2;
-//        pos_3.x = (model.sommets[face[2][0]-1].x*zw) + w/2;
-//        pos_1.y = (model.sommets[face[0][0]-1].y*zh) + h/2;
-//        pos_2.y = (model.sommets[face[1][0]-1].y*zh) + h/2;
-//        pos_3.y = (model.sommets[face[2][0]-1].y*zh) + h/2;
-//        pos_1.z = (model.sommets[face[0][0]-1].z*2048);
-//        pos_2.z = (model.sommets[face[1][0]-1].z*2048);
-//        pos_3.z = (model.sommets[face[2][0]-1].z*2048);
 
         Matrix facette(4,4);
         facette[0][0] = model.sommets[face[0][0]-1].x + 1;// + w/2;
@@ -206,7 +197,7 @@ void rendu(TGAImage &image, Model model)
         else if (lum3 < 0.f) lum3 = 0.0f;
 
         triangle_plein(image, &model, zbuffer, pos_1,pos_2,pos_3, uv1, uv2, uv3,
-                                                          TGAColor(lum1*255,1),
+                                                          TGAColor  (lum1*255,1),
                                                           TGAColor(lum2*255,1),
                                                           TGAColor(lum3*255,1));
     }

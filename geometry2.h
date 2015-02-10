@@ -15,36 +15,26 @@ public:
     Vec3f_b* normalize(float l = 1);
 };
 
-struct Vec2f_b{
-    float x;
-    float y;
-};
-
-
-struct Pos_b{
-    Pos_b(){}
-    Pos_b(float x, float y, float z)
-    {
+template<class t> struct Pos
+{
+    Pos(){}
+    Pos(t x, t y, t z){
         this->x = x;
         this->y = y;
         this->z = z;
     }
 
-    float x,y,z;
-};
-
-struct Pos_i_b{
-    int x,y,z;
-    Pos_i_b(int x, int y, int z)
-    {
-        this->x = x;
-        this->y = y;
-        this->z = z;
+    Pos operator -(Pos p){
+        return Pos<t>(this->x - p.x, this->y - p.y, this->z - p.z);
     }
 
-    Pos_i_b operator -(Pos_i_b p)
-    {
-        return Pos_i_b(x-p.x, y-p.y, z-p.z);
+    Pos operator +(Pos p){
+        return Pos<t>(this->x + p.x, this->y + p.y, this->z + p.z);
     }
+
+    t x,y,z;
 };
+
+typedef Pos<int> Pos_i;
+typedef Pos<float> Pos_f;
 #endif

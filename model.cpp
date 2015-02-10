@@ -47,7 +47,7 @@ Model::Model(const char *filename)
                     }
                     else if (strcmp(token[0],"v") == 0)
                     {
-                        Pos_b position;
+                        Pos_f position;
                         position.x = strtof(strtok(0, " "), NULL);
                         position.y = strtof(strtok(0, " "), NULL);
                         position.z = strtof(strtok(0, " "), NULL);
