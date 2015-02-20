@@ -5,7 +5,7 @@
 #include "tgaimage.h"
 #include "model.h"
 #include "geometry.h"
-#include "geometry2.h"
+
 //http://habrahabr.ru/post/248723/
 
 using namespace std;
@@ -28,12 +28,12 @@ Matrix viewport(int x, int y, int w, int h)
 //void projection(float coeff){
 //    Projection = Matrix::identity();
 //    Projection[3][2] = coeff;
-//}
+//
 
-Matrix lookat(Pos_f eye, Pos_f center, Pos_f up){
-    Pos_f z = (eye-center).normalize();
-    Pos_f x = (up^z).normalize();
-    Pos_f y = (z^x).normalize();
+Matrix lookat(Vec3f eye, Vec3f center, Vec3f up){
+    Vec3f z = (eye-center).normalize();
+    Vec3f x = (up^z).normalize();
+    Vec3f y = (z^x).normalize(); //S'attendre a ce que le normalize me pete a la geule
     Matrix res = Matrix::identity(4);
     for (int i = 0 ; i < 3 ; i++){
         res[0][i] = x[i];
@@ -44,7 +44,7 @@ Matrix lookat(Pos_f eye, Pos_f center, Pos_f up){
     return res;
 }
 
-void triangle_plein(TGAImage &image, Model *model,int **zbuffer,Pos_f pos_1, Pos_f pos_2, Pos_f pos_3,
+void triangle_plein(TGAImage &image, Model *model,int **zbuffer,Vec3f pos_1, Vec3f pos_2, Vec3f pos_3,
                                     vector<float> uv1,
                                     vector<float> uv2,
                                     vector<float> uv3,
@@ -111,14 +111,14 @@ void rendu(TGAImage &image, Model model)
     float lum1, lum2, lum3;
 
     vector<vector<int> > face;
-    Pos_f lumiere(0.f,0.f,-1.f);
-    Pos_f vn1, vn2, vn3;
+    Vec3f lumiere(0.f,0.f,-1.f);
+    Vec3f vn1, vn2, vn3;
     vector<float> uv1, uv2, uv3;
-    Pos_f pos_1, pos_2, pos_3;
+    Vec3f pos_1, pos_2, pos_3;
 
-    Pos_f eye(1,1,1);
-    Pos_f center(0,0,0);
-    Pos_f up(0,1,0);
+    Vec3f eye(1,1,1);
+    Vec3f center(0,0,0);
+    Vec3f up(0,1,0);
 
     Matrix ModelView(lookat(eye,center,Vec3f(0,1,0)));
     Matrix Projection = Matrix::identity(4);

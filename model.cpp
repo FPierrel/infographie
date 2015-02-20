@@ -5,8 +5,8 @@
 #include <sstream>
 #include <stdlib.h>
 #include "model.h"
-#include "geometry2.h"
 #include <stdio.h>
+#include "geometry.h"
 
 using namespace std;
 
@@ -32,7 +32,7 @@ Model::Model(const char *filename)
 
                     if (strcmp(token[0],"vn") == 0)
                     {
-                        Vec3f_b v;
+                        Vec3f v;
                         v.x = strtof(strtok(0, " "), NULL);
                         v.y = strtof(strtok(0, " "), NULL);
                         v.z = strtof(strtok(0, " "), NULL);
@@ -47,7 +47,7 @@ Model::Model(const char *filename)
                     }
                     else if (strcmp(token[0],"v") == 0)
                     {
-                        Pos_f position;
+                        Vec3f position;
                         position.x = strtof(strtok(0, " "), NULL);
                         position.y = strtof(strtok(0, " "), NULL);
                         position.z = strtof(strtok(0, " "), NULL);

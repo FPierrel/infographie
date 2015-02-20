@@ -4,50 +4,56 @@
 #include <cmath>
 #include <vector>
 
+using namespace std;
+
 class Matrix;
 
-template<class t> struct Pos
+template<typename t> struct Vec3
 {
     t x,y,z;
 
-    Pos(){}
-    Pos(t x, t y, t z){
+    Vec3(){}
+    Vec3(t x, t y, t z){
         this->x = x;
         this->y = y;
         this->z = z;
     }
 
-    Pos* normalize(float l = 1){
+    Vec3 *normalize(float l = 1){
         float n = norm();
 
         this->x = this->x*l/n;
         this->y = this->y*l/n;
         this->z = this->z*l/n;
 
-        return this;
+        return *this;
+    }
+
+    float scalaire(Vec3 other){
+        return this->x*other.x + this->y * other.y + this->z * other.z;
     }
 
     float norm(){
         return sqrt(x*x + y*y +z*z);
     }
 
-    Pos operator -(Pos p){
-        return Pos<t>(this->x - p.x, this->y - p.y, this->z - p.z);
+    Vec3 operator -(Vec3 p){
+        return Vec3<t>(this->x - p.x, this->y - p.y, this->z - p.z);
     }
 
-    Pos operator +(Pos p){
-        return Pos<t>(this->x + p.x, this->y + p.y, this->z + p.z);
+    Vec3 operator +(Vec3 p){
+        return Vec3<t>(this->x + p.x, this->y + p.y, this->z + p.z);
     }
 
-    Pos operator ^(Pos<t> p){
-         return Pos<t>(y*p.z-z*p.y, z*p.x-x*p.z, x*p.y-y*p.x);
+    Vec3 operator ^(Vec3<t> p){
+         return Vec3<t>(y*p.z-z*p.y, z*p.x-x*p.z, x*p.y-y*p.x);
     }
 
-    Pos operator *(float f){
-        return Pos(x*f, y*f, z*f);
+    Vec3 operator *(float f){
+        return Vec3(x*f, y*f, z*f);
     }
 
-    Pos operator *(Pos<t> p ){
+    Vec3 operator *(Vec3<t> p ){
         return x*p.x + y*p.y + z*p.z;
     }
 
@@ -63,8 +69,8 @@ template<class t> struct Pos
     }
 };
 
-typedef Pos<int> Pos_i;
-typedef Pos<float> Pos_f;
+typedef Vec3<int> Vec3i;
+typedef Vec3<float> Vec3f;
 
 
 
@@ -120,19 +126,19 @@ template <class t> std::ostream& operator<<(std::ostream& s, Vec3<t>& v) {
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 class Matrix {
-    std::vector<std::vector<float> > m;
+    vector<vector<float> > m;
     int rows, cols;
 public:
     Matrix(int r=4, int c=4);
-    Matrix(Pos_f p);
+    Matrix(Vec3f p);
     int nrows();
     int ncols();
     static Matrix identity(int dimensions);
-    std::vector<float>& operator[](const int i);
+    vector<float>& operator[](const int i);
     Matrix operator*(const Matrix& a);
     Matrix transpose();
     Matrix inverse();
-    friend std::ostream& operator<<(std::ostream& s, Matrix& m);
+    friend ostream& operator<<(ostream& s, Matrix& m);
 };
 
 #endif //__GEOMETRY_H__
