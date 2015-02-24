@@ -26,7 +26,7 @@ template<typename t> struct Vec3
         this->y = this->y*l/n;
         this->z = this->z*l/n;
 
-        return *this;
+        return this;
     }
 
     float scalaire(Vec3 other){

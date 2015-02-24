@@ -31,14 +31,14 @@ Matrix viewport(int x, int y, int w, int h)
 //
 
 Matrix lookat(Vec3f eye, Vec3f center, Vec3f up){
-    Vec3f z = (eye-center).normalize();
-    Vec3f x = (up^z).normalize();
-    Vec3f y = (z^x).normalize(); //S'attendre a ce que le normalize me pete a la geule
+    Vec3f *z = (eye-center).normalize();
+    Vec3f *x = (up^*z).normalize();
+    Vec3f *y = (*z^*x).normalize(); //S'attendre a ce que le normalize me pete a la geule
     Matrix res = Matrix::identity(4);
     for (int i = 0 ; i < 3 ; i++){
-        res[0][i] = x[i];
-        res[1][i] = y[i];
-        res[2][i] = z[i];
+        res[0][i] = (*x)[i];
+        res[1][i] = (*y)[i];
+        res[2][i] = (*z)[i];
         res[i][3] = -center[i];
     }
     return res;
@@ -56,7 +56,6 @@ void triangle_plein(TGAImage &image, Model *model,int **zbuffer,Vec3f pos_1, Vec
     float max_x = max(pos_1.x, max(pos_2.x, pos_3.x));
     float min_y = min(pos_1.y, min(pos_2.y, pos_3.y));
     float max_y = max(pos_1.y, max(pos_2.y, pos_3.y));
-    char c;
     float u,v,w;
 
     int xn, yn, zn;
