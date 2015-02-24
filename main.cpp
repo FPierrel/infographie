@@ -25,20 +25,15 @@ Matrix viewport(int x, int y, int w, int h)
     return Viewport;
 }
 
-//void projection(float coeff){
-//    Projection = Matrix::identity();
-//    Projection[3][2] = coeff;
-//
-
 Matrix lookat(Vec3f eye, Vec3f center, Vec3f up){
-    Vec3f *z = (eye-center).normalize();
-    Vec3f *x = (up^*z).normalize();
-    Vec3f *y = (*z^*x).normalize(); //S'attendre a ce que le normalize me pete a la geule
+    Vec3f z = (*(eye-center).normalize());
+    Vec3f x = (*(up^z).normalize());
+    Vec3f y = (*(z^x).normalize()); //S'attendre a ce que le normalize me pete a la geule
     Matrix res = Matrix::identity(4);
     for (int i = 0 ; i < 3 ; i++){
-        res[0][i] = (*x)[i];
-        res[1][i] = (*y)[i];
-        res[2][i] = (*z)[i];
+        res[0][i] = x[i];
+        res[1][i] = y[i];
+        res[2][i] = z[i];
         res[i][3] = -center[i];
     }
     return res;
@@ -123,13 +118,6 @@ void rendu(TGAImage &image, Model model)
     Matrix Projection = Matrix::identity(4);
     Matrix ViewPort   = viewport(w/8, h/8, w*3/4, h*3/4);
     Projection[2][3] = -1.f/(eye-center).norm();
-    //Matrix z = (ViewPort*Projection*ModelView);
-    /*lookat(eye,center,up);
-    viewport(w/8, h/8, w*3/4, h*3/4);
-    projection(-1.f/(eye-center).norm());*/
-
-    float zw = (0.5 * w);
-    float zh = (0.5 * h);
 
     int** zbuffer;
     zbuffer = new int*[w];
