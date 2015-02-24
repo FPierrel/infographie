@@ -110,7 +110,7 @@ void rendu(TGAImage &image, Model model)
     vector<float> uv1, uv2, uv3;
     Vec3f pos_1, pos_2, pos_3;
 
-    Vec3f eye(1,1,1);
+    Vec3f eye(0,0,1);
     Vec3f center(0,0,0);
     Vec3f up(0,1,0);
 
@@ -133,7 +133,7 @@ void rendu(TGAImage &image, Model model)
         face = model.faces[i];
 
         Matrix facette(4,4);
-        facette[0][0] = model.sommets[face[0][0]-1].x + 1;// + w/2;
+        facette[0][0] = model.sommets[face[0][0]-1].x + 1;
         facette[1][0] = model.sommets[face[0][0]-1].y + 1;// + h/2;
         facette[2][0] = model.sommets[face[0][0]-1].z;// * 2048;
         facette[0][1] = model.sommets[face[1][0]-1].x + 1;// + w/2;

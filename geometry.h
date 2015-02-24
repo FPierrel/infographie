@@ -66,7 +66,7 @@ template<typename t> struct Vec3
         case 2:
             return z;
         }
-        return this;
+
     }
 };
 
