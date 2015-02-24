@@ -28,7 +28,7 @@ Matrix viewport(int x, int y, int w, int h)
 Matrix lookat(Vec3f eye, Vec3f center, Vec3f up){
     Vec3f z = (*(eye-center).normalize());
     Vec3f x = (*(up^z).normalize());
-    Vec3f y = (*(z^x).normalize()); //S'attendre a ce que le normalize me pete a la geule
+    Vec3f y = (*(z^x).normalize());
     Matrix res = Matrix::identity(4);
     for (int i = 0 ; i < 3 ; i++){
         res[0][i] = x[i];
@@ -134,17 +134,16 @@ void rendu(TGAImage &image, Model model)
 
         Matrix facette(4,4);
         facette[0][0] = model.sommets[face[0][0]-1].x + 1;
-        facette[1][0] = model.sommets[face[0][0]-1].y + 1;// + h/2;
-        facette[2][0] = model.sommets[face[0][0]-1].z;// * 2048;
-        facette[0][1] = model.sommets[face[1][0]-1].x + 1;// + w/2;
-        facette[1][1] = model.sommets[face[1][0]-1].y + 1;// + h/2;
-        facette[2][1] = model.sommets[face[1][0]-1].z;// * 2048;
-        facette[0][2] = model.sommets[face[2][0]-1].x + 1;// + w/2;
-        facette[1][2] = model.sommets[face[2][0]-1].y + 1;// + h/2;
-        facette[2][2] = model.sommets[face[2][0]-1].z;// * 2048;
+        facette[1][0] = model.sommets[face[0][0]-1].y + 1;
+        facette[2][0] = model.sommets[face[0][0]-1].z;
+        facette[0][1] = model.sommets[face[1][0]-1].x + 1;
+        facette[1][1] = model.sommets[face[1][0]-1].y + 1;
+        facette[2][1] = model.sommets[face[1][0]-1].z;
+        facette[0][2] = model.sommets[face[2][0]-1].x + 1;
+        facette[1][2] = model.sommets[face[2][0]-1].y + 1;
+        facette[2][2] = model.sommets[face[2][0]-1].z;
 
         facette = ViewPort*Projection*ModelView*facette;
-        //facette = facette*z;
 
         pos_1.x = facette[0][0];
         pos_2.x = facette[0][1];
@@ -197,7 +196,6 @@ int main()
     Model model("african_head.obj");
     TGAImage image(1024, 1024, TGAImage::RGB);
 
-    //wireframe(image, model);
     rendu(image,model);
     image.flip_vertically();
     image.write_tga_file("dump.tga");
